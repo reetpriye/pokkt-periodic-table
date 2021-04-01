@@ -1,38 +1,61 @@
-.App {
-  text-align: center;
+.Content {
+  padding: 1rem;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#heading {
+  color: var(--secondary-color);
+  font-size: 4rem;
+  text-transform: uppercase;
+  margin: 1rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+#input-box-el-name-num {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-between;
 }
 
-.App-link {
-  color: #61dafb;
+#input-box > input {
+  display: block;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#atomic-number-input-field {
+  padding: 1rem;
+  font-size: 1.4rem;
+  width: 4rem;
+}
+
+.alert {
+  color: #e84545;
+  margin: 0;
+  font-size: 1rem;
+}
+
+#el-name-num {
+  display: flex;
+  margin-right: 1rem;
+}
+
+#el-atomic-num {
+  align-self: flex-end;
+  margin: 0;
+  font-size: 2rem;
+}
+
+#el-symbol {
+  margin: 0;
+  font-size: 4rem;
+  color: black;
+}
+
+#el-atomic-mass {
+  margin: 0;
+  font-size: 2rem;
+  color: black;
+}
+
+#el-properties {
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--secondary-color);
+  text-decoration: underline;
 }
