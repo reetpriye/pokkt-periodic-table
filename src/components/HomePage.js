@@ -1,19 +1,36 @@
 import React, { useEffect, useState } from 'react'
 import Message from './Message'
-import { Table, InputGroup, FormControl } from 'react-bootstrap'
+import {
+  Table,
+  InputGroup,
+  FormControl,
+  FormGroup,
+  Form
+} from 'react-bootstrap'
 import axios from 'axios'
 
 const HomePage = () => {
   const [atomicNum, setAtomicNum] = useState()
   const [elDetails, setElDetails] = useState({})
+  const [results, setResults] = useState([])
 
   useEffect(() => {
-    const uri = `https://neelpatel05.pythonanywhere.com/element/atomicnumber?atomicnumber=${atomicNum}`
-    const fetchData = async () => {
-      const { data } = await axios.get(uri)
+    const API_URL1 = 'https://periodic-table-api.herokuapp.com/'
+    const fetchAllData = async () => {
+      const { data } = await axios.get(API_URL1)
+      setResults(data)
+    }
+    fetchAllData()
+  }, [])
+
+  useEffect(() => {
+    const API_URL2 = `https://periodic-table-api.herokuapp.com/atomicNumber/${atomicNum}`
+    const getElementDetails = async () => {
+      const { data } = await axios.get(API_URL2)
       setElDetails(data)
     }
-    fetchData()
+
+    getElementDetails()
   }, [atomicNum])
 
   const {
@@ -41,14 +58,37 @@ const HomePage = () => {
   return (
     <>
       {!atomicNum ? (
-        <Message variant='info' msg='Kindly enter atomic number' />
+        <Message
+          variant='info'
+          msg='Kindly select element or enter atomic number'
+        />
       ) : atomicNum > 118 || atomicNum < 0 ? (
-        <Message variant='danger' msg='Kindly enter valid atomic number' />
+        <Message variant='danger' msg={`Sorry this element doesn't exists`} />
       ) : null}
+
+      <FormGroup>
+        <Form.Label className='m-0 text-info'>
+          Get details by element name
+        </Form.Label>
+        <Form.Control
+          as='select'
+          onChange={e => setAtomicNum(e.target.value)}
+          defaultValue='Select Element'
+        >
+          <option>Select Element</option>
+          {results.map((r, key) => (
+            <option key={key} value={r.atomicNumber}>
+              {`${r.atomicNumber} - ${r.name}`}
+            </option>
+          ))}
+        </Form.Control>
+      </FormGroup>
 
       <InputGroup className='mb-3'>
         <InputGroup.Prepend>
-          <InputGroup.Text id='basic-addon3'>Atomic Number</InputGroup.Text>
+          <InputGroup.Text id='basic-addon3'>
+            Search By Atomic Number
+          </InputGroup.Text>
         </InputGroup.Prepend>
         <FormControl
           type='number'
