@@ -1,7 +1,14 @@
 import React from 'react'
+import { Navbar } from 'react-bootstrap'
 
 const Header = () => {
-  return <h1 id='heading'>Pocket Periodic Table</h1>
+  return (
+    <Navbar bg='dark' className='mb-4'>
+      <Navbar.Brand className='text-light text-uppercase font-weight-bold'>
+        Pocket Periodic Table
+      </Navbar.Brand>
+    </Navbar>
+  )
 }
 
 export default Header
