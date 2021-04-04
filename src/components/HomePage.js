@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import Spinner from '../assets/spinner.gif'
+import Science from '../assets/science.svg'
 import Message from './Message'
 import {
   Table,
@@ -13,46 +15,62 @@ const HomePage = () => {
   const [atomicNum, setAtomicNum] = useState()
   const [elDetails, setElDetails] = useState({})
   const [results, setResults] = useState([])
+  const [showLoader, setShowLoader] = useState(false)
 
   useEffect(() => {
-    const API_URL1 = 'https://periodic-table-api.herokuapp.com/'
-    const fetchAllData = async () => {
-      const { data } = await axios.get(API_URL1)
-      setResults(data)
+    const fetchAllElements = async () => {
+      setShowLoader(true)
+      let config = {
+        // I know this
+        headers: {
+          'secret-key':
+            '$2b$10$K55R6SYBnHhcAtQDICDOZ.A1amDSnRt9FVAeHHpbcsvU011heVOEm'
+        }
+      }
+      const {
+        data: { elements }
+      } = await axios.get(
+        'https://api.jsonbin.io/b/6069c3ad6397691864735be9',
+        config
+      )
+      setShowLoader(false)
+      setResults(elements)
     }
-    fetchAllData()
+    fetchAllElements()
   }, [])
 
   useEffect(() => {
-    const API_URL2 = `https://periodic-table-api.herokuapp.com/atomicNumber/${atomicNum}`
-    const getElementDetails = async () => {
-      const { data } = await axios.get(API_URL2)
-      setElDetails(data)
-    }
+    const getElementDetails = () => {
+      const reqData = results.filter(e => e.number === Number(atomicNum))
 
+      if (reqData.length !== 0) setElDetails(reqData[0])
+    }
     getElementDetails()
-  }, [atomicNum])
+  }, [atomicNum, results])
 
   const {
-    atomicNumber,
-    symbol,
-    atomicMass,
     name,
-    bondingType,
-    atomicRadius,
-    meltingPoint,
-    boilingPoint,
+    appearance,
+    atomic_mass,
+    boil,
+    category,
+    color,
     density,
-    electronAffinity,
-    electronegativity,
-    electronicConfiguration,
-    groupBlock,
-    ionRadius,
-    vanDelWaalsRadius,
-    oxidationStates,
-    standardState,
-    ionizationEnergy,
-    yearDiscovered
+    discovered_by,
+    melt,
+    molar_heat,
+    named_by,
+    number,
+    period,
+    phase,
+    summary,
+    symbol,
+    shells,
+    electron_configuration,
+    electron_configuration_semantic,
+    electron_affinity,
+    electronegativity_pauling,
+    ionization_energies
   } = elDetails
 
   return (
@@ -62,10 +80,9 @@ const HomePage = () => {
           variant='info'
           msg='Kindly select element or enter atomic number'
         />
-      ) : atomicNum > 118 || atomicNum < 0 ? (
+      ) : atomicNum > 119 || atomicNum < 1 ? (
         <Message variant='danger' msg={`Sorry this element doesn't exists`} />
       ) : null}
-
       <FormGroup>
         <Form.Label className='m-0 text-info'>
           Get details by element name
@@ -77,13 +94,12 @@ const HomePage = () => {
         >
           <option>Select Element</option>
           {results.map((r, key) => (
-            <option key={key} value={r.atomicNumber}>
-              {`${r.atomicNumber} - ${r.name}`}
+            <option key={key} value={r.number}>
+              {`${r.number} - ${r.name}`}
             </option>
           ))}
         </Form.Control>
       </FormGroup>
-
       <InputGroup className='mb-3'>
         <InputGroup.Prepend>
           <InputGroup.Text id='basic-addon3'>
@@ -98,101 +114,157 @@ const HomePage = () => {
         />
       </InputGroup>
 
-      <div className='d-flex flex-column my-4 bg-light shadow-sm'>
+      <section className='d-flex my-2 flex-column bg-light shadow-sm align-items-stretch'>
         <div className='d-flex justify-content-center bg-info p-4'>
-          <h3 className='align-self-end'>
-            {atomicNumber ? atomicNumber : 'Z'}
-          </h3>
-          <h3 style={{ fontSize: '4rem' }}>{symbol ? symbol : 'X'}</h3>
-          {atomicMass ? (
-            Array.isArray(atomicMass) ? (
-              <h3 className='align-self-start'>{atomicMass[0]}</h3>
-            ) : (
-              <h3>{atomicMass && atomicMass.split('.')[0]}</h3>
-            )
+          {showLoader ? (
+            <img src={Spinner} style={{ width: '80px' }} alt='loading...' />
           ) : (
-            <h3>A</h3>
+            <>
+              <h3 className='align-self-end'>{number ? number : 'Z'}</h3>
+              <h3 style={{ fontSize: '4rem' }}>{symbol ? symbol : 'X'}</h3>
+              <h3>{atomic_mass ? atomic_mass.toFixed(0) : 'X'}</h3>
+            </>
           )}
         </div>
         <div className='d-flex bg-dark text-light justify-content-center'>
           <h3>{name ? name : 'NA'}</h3>
         </div>
-      </div>
+      </section>
 
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Property</th>
-            <th>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Atomic Mass</td>
-            <td>{atomicMass ? atomicMass : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Bonding Type</td>
-            <td>{bondingType ? bondingType : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Atomic Radius</td>
-            <td>{atomicRadius ? atomicRadius : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Melting Point</td>
-            <td>{meltingPoint ? meltingPoint : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Boiling Point</td>
-            <td>{boilingPoint ? boilingPoint : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Density</td>
-            <td>{density ? density : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Group Block</td>
-            <td>{groupBlock ? groupBlock : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Electron Affinity</td>
-            <td>{electronAffinity ? electronAffinity : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Electronegativity</td>
-            <td>{electronegativity ? electronegativity : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Electronic Configuration</td>
-            <td>{electronicConfiguration ? electronicConfiguration : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Ion Radius</td>
-            <td>{ionRadius ? ionRadius : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Oxidation States</td>
-            <td>{oxidationStates ? oxidationStates : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>VandeWaals Radius</td>
-            <td>{vanDelWaalsRadius ? vanDelWaalsRadius : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Standard State</td>
-            <td>{standardState ? standardState : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Ionization Energy</td>
-            <td>{ionizationEnergy ? ionizationEnergy : 'NA'}</td>
-          </tr>
-          <tr>
-            <td>Year Discoverd</td>
-            <td>{yearDiscovered ? yearDiscovered : 'NA'}</td>
-          </tr>
-        </tbody>
-      </Table>
+      {!atomicNum ? (
+        <>
+          <div className='d-flex py-4 flex-column align-items-center'>
+            <img
+              className='my-4'
+              src={Science}
+              style={{ width: '40%' }}
+              alt='science-logo'
+            />
+            <h6 className='m-0 d-block d-xl-none'>KINDLY SELECT ELEMENT</h6>
+          </div>
+        </>
+      ) : (
+        <>
+          <section className='d-flex border border-info bg-light shadow-sm my-3'>
+            <div className='d-flex bg-dark text-light p-2'>
+              <h6 className='align-self-center m-0'>E.C</h6>
+            </div>
+            <div className='p-2'>
+              <h6 className='m-0'>
+                {electron_configuration ? electron_configuration : 'NA'}
+              </h6>
+            </div>
+          </section>
+
+          <section className='d-flex bg-light shadow-sm my-2'>
+            <div id='heading' className='bg-dark'>
+              <h4 className='text-center text-uppercase m-0 px-1 py-2 text-light'>
+                Summary
+              </h4>
+            </div>
+            <div>
+              <p className='p-2 m-0'>{summary ? summary : 'NA'}</p>
+            </div>
+          </section>
+
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Period</td>
+                <td>{period ? period : 'NA'}</td>
+              </tr>
+              <tr>
+                <td>Atomic Mass</td>
+                <td>{atomic_mass ? atomic_mass : 'NA'}</td>
+              </tr>
+              <tr>
+                <td>Appearance</td>
+                <td>{appearance ? appearance : 'NA'}</td>
+              </tr>
+              <tr>
+                <td>Category</td>
+                <td>{category ? category : 'NA'}</td>
+              </tr>
+              <tr>
+                <td>Color</td>
+                <td>{color ? color : 'NA'}</td>
+              </tr>
+              <tr>
+                <td>Density</td>
+                <td>{density ? density : 'NA'}</td>
+              </tr>
+              <tr>
+                <td>Dicovered By</td>
+                <td>{discovered_by ? discovered_by : 'NA'}</td>
+              </tr>
+              <tr>
+                <td>Molar Heat</td>
+                <td>{molar_heat ? molar_heat : 'NA'}</td>
+              </tr>
+              <tr>
+                <td>Named By</td>
+                <td>{named_by ? named_by : 'NA'}</td>
+              </tr>
+              <tr>
+                <td>Phase</td>
+                <td>{phase ? phase : 'NA'}</td>
+              </tr>
+              <tr>
+                <td>Melting Point</td>
+                <td>{melt ? melt : 'NA'}</td>
+              </tr>
+              <tr>
+                <td>Boiling Point</td>
+                <td>{boil ? boil : 'NA'}</td>
+              </tr>
+              <tr>
+                <td>Ionization Energies</td>
+                <td>
+                  {ionization_energies
+                    ? ionization_energies.map(i => (
+                        <p style={{ display: 'inline' }}>{`${i}, `}</p>
+                      ))
+                    : 'NA'}
+                </td>
+              </tr>
+              <tr>
+                <td>Shells</td>
+                <td>
+                  {shells
+                    ? shells.map(s => (
+                        <p style={{ display: 'inline' }}>{`${s} `}</p>
+                      ))
+                    : 'NA'}
+                </td>
+              </tr>
+              <tr>
+                <td>Electron Affinity</td>
+                <td>{electron_affinity ? electron_affinity : 'NA'}</td>
+              </tr>
+              <tr>
+                <td>Electronegativity</td>
+                <td>
+                  {electronegativity_pauling ? electronegativity_pauling : 'NA'}
+                </td>
+              </tr>
+              <tr>
+                <td>Electronic Configuration Semantic</td>
+                <td>
+                  {electron_configuration_semantic
+                    ? electron_configuration_semantic
+                    : 'NA'}
+                </td>
+              </tr>
+            </tbody>
+          </Table>
+        </>
+      )}
     </>
   )
 }

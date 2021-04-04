@@ -1,3 +1,8 @@
 #placeholder-div {
   min-width: 50px;
 }
+
+#heading {
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
+}
