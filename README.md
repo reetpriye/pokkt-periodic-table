@@ -1,6 +1,6 @@
 # Preview
 
-![Screenshot](assets/Screenshot.jpg)
+![Screenshot](assets/Screenshot.png)
 
 
 # Getting Started with Create React App
