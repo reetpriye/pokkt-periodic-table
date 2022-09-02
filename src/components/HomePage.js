@@ -21,16 +21,16 @@ const HomePage = () => {
     const fetchAllElements = async () => {
       setShowLoader(true)
       let config = {
-        // I know this
+        // Don't make unnecessary calls
         headers: {
-          'secret-key':
-            '$2b$10$K55R6SYBnHhcAtQDICDOZ.A1amDSnRt9FVAeHHpbcsvU011heVOEm'
+          'X-Master-Key':
+            '$2b$10$Q52vyNMWcst0nKiJqMPmdeJnXggEAjZba1yEee8mU9/9BidvvU1OC'
         }
       }
       const {
-        data: { elements }
+        data: { record: {elements} }
       } = await axios.get(
-        'https://api.jsonbin.io/b/6069c3ad6397691864735be9',
+        'https://api.jsonbin.io/v3/b/6069c3ad6397691864735be9',
         config
       )
       setShowLoader(false)
